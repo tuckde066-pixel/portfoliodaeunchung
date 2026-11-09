@@ -114,3 +114,16 @@ main { margin-left: var(--side); padding: 28px 40px 120px 24px; }
   .work-item { margin-bottom: 56px; }
   .text-row { flex-direction: column; gap: 2px; }
 }
+   /* ───────── Email 버튼 (누르면 주소 펼침 + 복사) ───────── */
+   .email-btn {
+     display: block; padding: 0; border: 0; background: none;
+     font: inherit; color: inherit; cursor: pointer; text-align: left;
+   }
+   .email-btn:hover { color: var(--muted); }
+   .email-reveal { margin: 2px 0 6px; }
+   .email-reveal a { text-decoration: underline; text-underline-offset: 3px; word-break: break-all; }
+   .email-note { display: block; color: var(--muted); font-size: 12px; }
+   @media (max-width: 760px) {
+     .side-contact { flex-wrap: wrap; }
+     .email-reveal { flex-basis: 100%; order: 3; }
+   }
