@@ -15,7 +15,7 @@ const TEXTS = [
   {
     slug: "artist-statement",
     year: 2026,
-    title: "작가노트",
+    title: "Statement",
     titleEn: "Artist Statement",
     author: "",
     source: "",
