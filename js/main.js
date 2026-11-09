@@ -61,7 +61,11 @@ function renderSidebar() {
       </div>
     </nav>
     <div class="side-contact">
-      ${SITE.email ? `<a href="mailto:${esc(SITE.email)}">Email</a>` : ""}
+      ${SITE.email ? `<button type="button" class="email-btn" id="email-btn">Email</button>
+      <div class="email-reveal" id="email-reveal" hidden>
+        <a href="mailto:${esc(SITE.email)}">${esc(SITE.email)}</a>
+        <span class="email-note" id="email-note"></span>
+      </div>` : ""}
       ${SITE.instagram ? `<a href="${esc(SITE.instagram)}" target="_blank" rel="noopener">Instagram</a>` : ""}
     </div>`;
 }
@@ -165,8 +169,28 @@ function renderText(root) {
     ${pager(arr, i, "text.html")}`;
 }
 
+/* ───────── Email: 누르면 주소가 펼쳐지고 자동으로 복사됨 ───────── */
+function setupEmail() {
+  const btn = document.getElementById("email-btn");
+  if (!btn) return;
+  const box = document.getElementById("email-reveal");
+  const note = document.getElementById("email-note");
+  btn.addEventListener("click", async () => {
+    const opening = box.hidden;
+    box.hidden = !opening;
+    if (!opening) return;
+    try {
+      await navigator.clipboard.writeText(SITE.email);
+      note.textContent = "복사되었습니다";
+    } catch {
+      note.textContent = "";
+    }
+  });
+}
+
 /* ───────── 실행 ───────── */
 renderSidebar();
+setupEmail();
 const content = document.getElementById("content");
 if (content) {
   const routes = {
