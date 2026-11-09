@@ -5,7 +5,7 @@ const SITE = {
   name: "정다은",
   nameEn: "Daeun CHUNG",               // 영문 표기
   email: "tuckde066@naver.com",            // 이메일 주소로 바꾸세요
-  instagram: "https://www.instagram.com/choroknaraa//"  // 인스타그램 주소로 바꾸세요 (안 쓰면 "" 로 비우기)
+  instagram: "https://www.instagram.com/choroknaraa/"  // 인스타그램 주소로 바꾸세요 (안 쓰면 "" 로 비우기)
 };
 
 /*
