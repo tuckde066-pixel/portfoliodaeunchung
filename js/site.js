@@ -14,6 +14,6 @@ const SITE = {
 */
 const SIDEBAR_SUBLIST = {
   works: false,
-  exhibition: false,
-  text: false
+  exhibitions: false,
+  texts: false
 };
