@@ -116,7 +116,7 @@ function renderWork(root) {
     ${pager(arr, i, "work.html")}`;
 }
 
-/* ───────── Exhibition ───────── */
+/* ───────── Exhibitions ───────── */
 const exMeta = (e) => [e.venue, e.date].filter(Boolean).join(", ");
 function renderExhibitionIndex(root) {
   root.innerHTML = byYear(EXHIBITIONS_).map((e) => `
@@ -144,7 +144,7 @@ function renderExhibition(root) {
     ${pager(arr, i, "exhibition.html")}`;
 }
 
-/* ───────── Text ───────── */
+/* ───────── Texts ───────── */
 const textMeta = (t) => [t.author, t.source, t.year].filter(Boolean).join(", ");
 function renderTextIndex(root) {
   root.innerHTML = `<div class="text-list">${byYear(TEXTS_).map((t) => `
