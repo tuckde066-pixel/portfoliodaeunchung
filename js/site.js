@@ -3,9 +3,9 @@
 */
 const SITE = {
   name: "정다은",
-  nameEn: "Daeun Chung",               // 영문 표기
-  email: "you@example.com",            // 이메일 주소로 바꾸세요
-  instagram: "https://instagram.com/"  // 인스타그램 주소로 바꾸세요 (안 쓰면 "" 로 비우기)
+  nameEn: "Daeun CHUNG",               // 영문 표기
+  email: "tuckde066@naver.com",            // 이메일 주소로 바꾸세요
+  instagram: "https://www.instagram.com/choroknaraa//"  // 인스타그램 주소로 바꾸세요 (안 쓰면 "" 로 비우기)
 };
 
 /*
@@ -13,7 +13,7 @@ const SITE = {
   true = 보여주기 / false = Works · Exhibition · Text · CV 네 줄만 보여주기
 */
 const SIDEBAR_SUBLIST = {
-  works: true,
-  exhibition: true,
-  text: true
+  works: false,
+  exhibition: false,
+  text: false
 };
