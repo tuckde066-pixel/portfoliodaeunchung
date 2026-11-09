@@ -4,7 +4,10 @@
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const byYear = (arr) => [...arr].sort((a, b) => (b.year || 0) - (a.year || 0));
 const page = (location.pathname.split("/").pop() || "index.html").replace(".html", "") || "index";
-const currentId = new URLSearchParams(location.search).get("id");
+const params = new URLSearchParams(location.search);
+const currentId = params.get("id");
+const yearParam = params.get("year") ? Number(params.get("year")) : null;
+const yearsOf = (arr) => [...new Set(arr.map((x) => x.year).filter(Boolean))].sort((a, b) => b - a);
 const paras = (t) => String(t || "").split(/\n\s*\n/).map((p) => `<p>${esc(p.trim()).replace(/\n/g, "<br>")}</p>`).join("");
 
 const WORKS_ = typeof WORKS !== "undefined" ? WORKS : [];
@@ -28,32 +31,38 @@ function workGroups() {
 function renderSidebar() {
   const root = document.getElementById("sidebar");
   if (!root) return;
-  const sub = typeof SIDEBAR_SUBLIST !== "undefined" ? SIDEBAR_SUBLIST : { works: true, exhibition: true, text: true };
+  const sub = typeof SIDEBAR_SUBLIST !== "undefined" ? SIDEBAR_SUBLIST : { text: true };
 
-  const worksSub = sub.works ? workGroups().map((g) => `
-      <div class="side-sublabel">${esc(g.label)}</div>
-      ${g.items.map((w) => sideLink(`work.html?id=${encodeURIComponent(w.slug)}`, w.title, page === "work" && w.slug === currentId)).join("")}`).join("") : "";
+  // Works: Works 쪽 페이지에 있을 때만 연도가 펼쳐짐
+  const inWorks = page === "index" || page === "work";
+  const curWork = page === "work" ? WORKS_.find((w) => w.slug === currentId) : null;
+  const workYear = yearParam || (curWork && curWork.year);
+  const worksYears = inWorks ? yearsOf(WORKS_).map((y) =>
+    sideLink(`index.html?year=${y}`, y, workYear === y)).join("") : "";
 
-  const types = [...new Set(EXHIBITIONS_.map((e) => e.type || ""))];
-  const exSub = sub.exhibition ? types.map((t) => `
-      ${t ? `<div class="side-sublabel">${esc(t)}</div>` : ""}
-      ${byYear(EXHIBITIONS_.filter((e) => (e.type || "") === t)).map((e) => sideLink(`exhibition.html?id=${encodeURIComponent(e.slug)}`, e.title, page === "exhibition" && e.slug === currentId)).join("")}`).join("") : "";
+  // Exhibition: Exhibition 페이지에 있을 때만 연도가 펼쳐짐
+  const inEx = page === "exhibition";
+  const curEx = inEx && currentId ? EXHIBITIONS_.find((e) => e.slug === currentId) : null;
+  const exYear = yearParam || (curEx && curEx.year);
+  const exYears = inEx ? yearsOf(EXHIBITIONS_).map((y) =>
+    sideLink(`exhibition.html?year=${y}`, y, exYear === y)).join("") : "";
 
-  const textSub = sub.text ? byYear(TEXTS_).map((t) => sideLink(`text.html?id=${encodeURIComponent(t.slug)}`, t.title, page === "text" && t.slug === currentId)).join("") : "";
+  const textSub = sub.text && page === "text" ? byYear(TEXTS_).map((t) =>
+    sideLink(`text.html?id=${encodeURIComponent(t.slug)}`, t.title, t.slug === currentId)).join("") : "";
 
   root.innerHTML = `
     <a class="side-name" href="index.html">${esc(SITE.name)}${SITE.nameEn ? `<br><span>${esc(SITE.nameEn)}</span>` : ""}</a>
     <nav>
       <div class="side-section">
-        ${sideLink("index.html", "Works", page === "index")}
-        ${worksSub ? `<div class="side-sub">${worksSub}</div>` : ""}
+        ${sideLink("index.html", "Works", inWorks && !workYear)}
+        ${worksYears ? `<div class="side-sub side-years">${worksYears}</div>` : ""}
       </div>
       <div class="side-section">
-        ${sideLink("exhibition.html", "Exhibition", page === "exhibition" && !currentId)}
-        ${exSub ? `<div class="side-sub">${exSub}</div>` : ""}
+        ${sideLink("exhibition.html", "Exhibitions", inEx && !exYear)}
+        ${exYears ? `<div class="side-sub side-years">${exYears}</div>` : ""}
       </div>
       <div class="side-section">
-        ${sideLink("text.html", "Text", page === "text" && !currentId)}
+        ${sideLink("text.html", "Texts", page === "text" && !currentId)}
         ${textSub ? `<div class="side-sub">${textSub}</div>` : ""}
       </div>
       <div class="side-section">
@@ -88,7 +97,8 @@ const notFound = (file, label) => `<p>찾을 수 없습니다. <a href="${file}"
 /* ───────── Works ───────── */
 const workMeta = (w) => [w.medium, w.size, w.year].filter(Boolean).join(", ");
 function renderWorksIndex(root) {
-  const years = [...new Set(WORKS_.map((w) => w.year))].sort((a, b) => b - a);
+  // index.html → 전체(연도별), index.html?year=2026 → 그 연도만
+  const years = yearParam ? [yearParam] : yearsOf(WORKS_);
   root.innerHTML = years.map((y) => `
     <section class="year-block">
       <h2 class="year-label">${y}</h2>
@@ -96,7 +106,7 @@ function renderWorksIndex(root) {
         <a class="work-item" href="work.html?id=${encodeURIComponent(w.slug)}">
           <img src="${esc(w.images[0].src)}" alt="${esc(w.title)}" loading="lazy">
           <div class="caption"><div class="title">${esc(w.title)}</div><div class="meta">${esc(workMeta(w))}</div></div>
-        </a>`).join("")}
+        </a>`).join("") || "<p class=\"meta\">이 연도의 작품이 없습니다.</p>"}
     </section>`).join("");
 }
 function renderWork(root) {
@@ -116,21 +126,35 @@ function renderWork(root) {
     ${pager(arr, i, "work.html")}`;
 }
 
-/* ───────── Exhibitions ───────── */
+/* ───────── Exhibition ───────── */
 const exMeta = (e) => [e.venue, e.date].filter(Boolean).join(", ");
 function renderExhibitionIndex(root) {
-  root.innerHTML = byYear(EXHIBITIONS_).map((e) => `
-    <a class="work-item" href="exhibition.html?id=${encodeURIComponent(e.slug)}">
-      ${e.images && e.images[0] ? `<img src="${esc(e.images[0].src)}" alt="${esc(e.title)}" loading="lazy">` : ""}
-      <div class="caption">
-        <div class="title">${esc(e.title)}${e.type ? ` <span class="meta">(${esc(e.type)})</span>` : ""}</div>
-        <div class="meta">${esc(exMeta(e))}</div>
-      </div>
-    </a>`).join("") || "<p>준비 중입니다.</p>";
+  // exhibition.html → 전체(연도별), exhibition.html?year=2025 → 그 연도만
+  // 각 전시는 [포스터 썸네일 | 제목·장소·기간] 한 줄. 누르면 전시 상세(서문 + 전경)로 이동
+  const years = yearParam ? [yearParam] : yearsOf(EXHIBITIONS_);
+  const row = (e) => {
+    const cover = e.poster || (e.images && e.images[0] && e.images[0].src);
+    const hasDetail = (e.images && e.images.length) || e.text;
+    const inner = `
+      <div class="ex-thumb">${cover ? `<img src="${esc(cover)}" alt="${esc(e.title)} 포스터" loading="lazy">` : ""}</div>
+      <div class="ex-info">
+        <div class="title">${esc(e.title)}</div>
+        ${e.titleEn ? `<div class="meta">${esc(e.titleEn)}</div>` : ""}
+        <div class="ex-meta">${esc([e.type ? `${e.type} Exhibition` : "", e.venue, e.date].filter(Boolean).join("\n"))}</div>
+      </div>`;
+    return hasDetail
+      ? `<a class="ex-row" href="exhibition.html?id=${encodeURIComponent(e.slug)}">${inner}</a>`
+      : `<div class="ex-row">${inner}</div>`;
+  };
+  root.innerHTML = years.map((y) => `
+    <section class="year-block">
+      <h2 class="year-label">${y}</h2>
+      ${EXHIBITIONS_.filter((e) => e.year === y).map(row).join("") || "<p class=\"meta\">이 연도의 전시가 없습니다.</p>"}
+    </section>`).join("") || "<p>준비 중입니다.</p>";
 }
 function renderExhibition(root) {
   const arr = byYear(EXHIBITIONS_), i = arr.findIndex((e) => e.slug === currentId);
-  if (i < 0) { root.innerHTML = notFound("exhibition.html", "Exhibition"); return; }
+  if (i < 0) { root.innerHTML = notFound("exhibition.html", "Exhibitions"); return; }
   const e = arr[i];
   document.title = `${e.title} — ${SITE.name}`;
   root.innerHTML = `
@@ -144,7 +168,7 @@ function renderExhibition(root) {
     ${pager(arr, i, "exhibition.html")}`;
 }
 
-/* ───────── Texts ───────── */
+/* ───────── Text ───────── */
 const textMeta = (t) => [t.author, t.source, t.year].filter(Boolean).join(", ");
 function renderTextIndex(root) {
   root.innerHTML = `<div class="text-list">${byYear(TEXTS_).map((t) => `
@@ -155,7 +179,7 @@ function renderTextIndex(root) {
 }
 function renderText(root) {
   const arr = byYear(TEXTS_), i = arr.findIndex((t) => t.slug === currentId);
-  if (i < 0) { root.innerHTML = notFound("text.html", "Text"); return; }
+  if (i < 0) { root.innerHTML = notFound("text.html", "Texts"); return; }
   const t = arr[i];
   document.title = `${t.title} — ${SITE.name}`;
   root.innerHTML = `
