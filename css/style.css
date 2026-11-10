@@ -127,3 +127,11 @@ main { margin-left: var(--side); padding: 28px 40px 120px 24px; }
      .side-contact { flex-wrap: wrap; }
      .email-reveal { flex-basis: 100%; order: 3; }
    }
+   /* ───────── 왼쪽 위 이름 ───────── */
+   .side-name {
+     font-size: 20px;       /* 글자 크기 */
+     font-weight: 700;      /* 굵기: 400 보통 · 500 · 600 · 700 굵게 */
+     color: #000000;        /* 색 */
+     letter-spacing: 0.01em;
+     line-height: 1.25;
+   }
