@@ -159,7 +159,7 @@ a.ex-row:hover .title { text-decoration: underline; text-underline-offset: 4px; 
 /* ───────── 왼쪽 위 이름 ───────── */
 .side-name {
   font-size: 20px;       /* 글자 크기 */
-  font-weight: 400;      /* 굵기: 400 보통 · 500 · 600 · 700 굵게 */
+  font-weight: 700;      /* 굵기: 400 보통 · 500 · 600 · 700 굵게 */
   color: #000000;        /* 색 */
   letter-spacing: 0.01em;
   line-height: 1.25;
@@ -201,4 +201,32 @@ a.ex-row:hover .title { text-decoration: underline; text-underline-offset: 4px; 
 @media (max-width: 760px) {
   .v-stage { inset: 52px 8px 52px; }
   .v-prev, .v-next { top: auto; bottom: 4px; transform: none; }
+}
+
+/* ───────── Works 목록: 이미지 + 한 줄 캡션(가운데) ───────── */
+.work-item {
+  width: fit-content; max-width: min(100%, var(--max));
+  margin: 0 0 80px;
+}
+.work-item img { margin: 0 auto; cursor: zoom-in; }
+.work-item:hover img { opacity: 1; }
+.work-item .caption,
+.figure figcaption {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 14px;        /* 캡션 글자 크기 */
+  color: var(--fg);       /* 캡션 색. 회색으로 하려면 var(--muted) */
+}
+.figure { width: fit-content; max-width: min(100%, var(--max)); }
+.figure img { margin: 0 auto; }
+
+/* ───────── 하단 카피라이트 ───────── */
+.site-footer {
+  max-width: var(--max);
+  margin-top: 120px; padding-top: 20px;
+  border-top: 1px solid var(--line);
+  font-size: 12px; color: var(--muted);
+}
+@media (max-width: 760px) {
+  .site-footer { margin-top: 80px; }
 }
