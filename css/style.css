@@ -159,7 +159,7 @@ a.ex-row:hover .title { text-decoration: underline; text-underline-offset: 4px; 
 /* ───────── 왼쪽 위 이름 ───────── */
 .side-name {
   font-size: 20px;       /* 글자 크기 */
-  font-weight: 700;      /* 굵기: 400 보통 · 500 · 600 · 700 굵게 */
+  font-weight: 400;      /* 굵기: 400 보통 · 500 · 600 · 700 굵게 */
   color: #000000;        /* 색 */
   letter-spacing: 0.01em;
   line-height: 1.25;
