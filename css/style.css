@@ -185,8 +185,11 @@ a.ex-row:hover .title { text-decoration: underline; text-underline-offset: 4px; 
 }
 .viewer.zoomed .v-stage img { cursor: zoom-out; transition: transform .25s ease, transform-origin 0s; }
 .v-caption {
-  position: absolute; left: 0; right: 0; bottom: 18px;
-  text-align: center; color: var(--muted);
+     position: absolute; left: 0; right: 0; bottom: 18px;
+     text-align: center;
+     font-size: 10px;        /* 목록 캡션과 같은 크기 */
+     color: var(--muted);       /* 목록 캡션과 같은 검정 */
+   }
 }
 .viewer button {
   position: absolute; border: 0; background: none; cursor: pointer;
