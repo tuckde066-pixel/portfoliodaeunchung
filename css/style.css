@@ -44,7 +44,7 @@ img { display: block; width: 100%; height: auto; }
 main { margin-left: var(--side); padding: 28px 40px 120px 24px; }
 
 /* ───────── 목록 (Works / Exhibition) ───────── */
-.year-block { max-width: var(--max); margin-bottom: 96px; }
+.year-block { max-width: var(--max); margin-bottom: 90px; }
 .year-label {
   font-size: 14px; font-weight: 600;
   padding-bottom: 12px; margin-bottom: 40px;
@@ -174,7 +174,7 @@ a.ex-row:hover .title { text-decoration: underline; text-underline-offset: 4px; 
 }
 .viewer[hidden] { display: none; }
 .v-stage {
-  position: absolute; inset: 56px 72px 56px;
+  position: absolute; inset: 56px 72px 50px;
   display: flex; align-items: center; justify-content: center;
   overflow: hidden;
 }
@@ -212,10 +212,10 @@ a.ex-row:hover .title { text-decoration: underline; text-underline-offset: 4px; 
 .work-item:hover img { opacity: 1; }
 .work-item .caption,
 .figure figcaption {
-  margin-top: 12px;
+  margin-top: 8px;
   text-align: center;
-  font-size: 14px;        /* 캡션 글자 크기 */
-  color: var(--fg);       /* 캡션 색. 회색으로 하려면 var(--muted) */
+  font-size: 10px;        /* 캡션 글자 크기 */
+  color: var(--muted);       /* 캡션 색. 회색으로 하려면 var(--muted) */
 }
 .figure { width: fit-content; max-width: min(100%, var(--max)); }
 .figure img { margin: 0 auto; }
