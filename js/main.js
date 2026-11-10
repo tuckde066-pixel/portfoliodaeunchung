@@ -212,6 +212,82 @@ function setupEmail() {
   });
 }
 
+/* ───────── 이미지 확대 보기 ─────────
+   상세 페이지 이미지를 누르면 전체 화면으로 열리고,
+   거기서 한 번 더 누르면 확대 → 마우스를 움직이는 곳이 확대됩니다. 다시 누르면 원래대로.
+   닫기: × 버튼, Esc 키, 이미지 바깥 클릭.  여러 장이면 ← → 키나 화살표로 넘기기 */
+function setupViewer() {
+  const imgs = [...document.querySelectorAll(".figure img")];
+  if (!imgs.length) return;
+
+  const v = document.createElement("div");
+  v.className = "viewer";
+  v.hidden = true;
+  v.innerHTML = `
+    <button type="button" class="v-close" aria-label="닫기">×</button>
+    <button type="button" class="v-prev" aria-label="이전">←</button>
+    <button type="button" class="v-next" aria-label="다음">→</button>
+    <div class="v-stage"><img alt=""></div>
+    <div class="v-caption"></div>`;
+  document.body.appendChild(v);
+  const stage = v.querySelector(".v-stage"), big = stage.querySelector("img"), cap = v.querySelector(".v-caption");
+  const prevBtn = v.querySelector(".v-prev"), nextBtn = v.querySelector(".v-next");
+  let idx = 0, zoomed = false;
+
+  const setOrigin = (x, y) => {
+    const r = big.getBoundingClientRect();
+    // 확대 중에는 getBoundingClientRect가 커지므로 원래 크기 기준으로 계산
+    const w = big.offsetWidth, h = big.offsetHeight;
+    const left = (stage.clientWidth - w) / 2 + stage.getBoundingClientRect().left;
+    const top = (stage.clientHeight - h) / 2 + stage.getBoundingClientRect().top;
+    const px = Math.min(100, Math.max(0, ((x - left) / w) * 100));
+    const py = Math.min(100, Math.max(0, ((y - top) / h) * 100));
+    big.style.transformOrigin = `${px}% ${py}%`;
+    return r;
+  };
+  const zoomLevel = () => Math.min(4, Math.max(2.5, big.naturalWidth / big.offsetWidth));
+  const unzoom = () => { zoomed = false; big.style.transform = ""; v.classList.remove("zoomed"); };
+
+  function show(i) {
+    idx = (i + imgs.length) % imgs.length;
+    unzoom();
+    big.src = imgs[idx].currentSrc || imgs[idx].src;
+    const fc = imgs[idx].closest("figure").querySelector("figcaption");
+    cap.textContent = fc ? fc.textContent : "";
+    prevBtn.hidden = nextBtn.hidden = imgs.length < 2;
+  }
+  function open(i) { show(i); v.hidden = false; document.body.style.overflow = "hidden"; }
+  function close() { v.hidden = true; unzoom(); document.body.style.overflow = ""; }
+
+  imgs.forEach((im, i) => im.addEventListener("click", () => open(i)));
+  v.querySelector(".v-close").addEventListener("click", close);
+  prevBtn.addEventListener("click", () => show(idx - 1));
+  nextBtn.addEventListener("click", () => show(idx + 1));
+  stage.addEventListener("click", (e) => { if (e.target === stage) close(); });
+
+  big.addEventListener("click", (e) => {
+    if (zoomed) { unzoom(); return; }
+    setOrigin(e.clientX, e.clientY);
+    zoomed = true;
+    big.style.transform = `scale(${zoomLevel()})`;
+    v.classList.add("zoomed");
+  });
+  big.addEventListener("mousemove", (e) => { if (zoomed) setOrigin(e.clientX, e.clientY); });
+  big.addEventListener("touchmove", (e) => {
+    if (!zoomed) return;
+    e.preventDefault();
+    const t = e.touches[0];
+    setOrigin(t.clientX, t.clientY);
+  }, { passive: false });
+
+  document.addEventListener("keydown", (e) => {
+    if (v.hidden) return;
+    if (e.key === "Escape") close();
+    if (e.key === "ArrowLeft" && imgs.length > 1) show(idx - 1);
+    if (e.key === "ArrowRight" && imgs.length > 1) show(idx + 1);
+  });
+}
+
 /* ───────── 실행 ───────── */
 renderSidebar();
 setupEmail();
@@ -225,3 +301,4 @@ if (content) {
   };
   (routes[page] || routes.index)();
 }
+setupViewer();
