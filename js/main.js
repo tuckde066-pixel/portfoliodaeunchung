@@ -96,17 +96,31 @@ const notFound = (file, label) => `<p>찾을 수 없습니다. <a href="${file}"
 
 /* ───────── Works ───────── */
 const workMeta = (w) => [w.medium, w.size, w.year].filter(Boolean).join(", ");
+// 확대 보기에 들어갈 이미지 목록 (Works 목록 화면에서 채워짐)
+let SLIDES = [];
+const workLine = (w) => [w.title, w.medium, w.size, w.year].filter(Boolean).join(", ");
+
 function renderWorksIndex(root) {
   // index.html → 전체(연도별), index.html?year=2026 → 그 연도만
+  // 이미지를 누르면 새 페이지 없이 바로 확대 보기로 열림 (그 작품의 앞면·뒷면·부분 → 다음 작품 순서)
   const years = yearParam ? [yearParam] : yearsOf(WORKS_);
+  SLIDES = [];
   root.innerHTML = years.map((y) => `
     <section class="year-block">
       <h2 class="year-label">${y}</h2>
-      ${WORKS_.filter((w) => w.year === y).map((w) => `
-        <a class="work-item" href="work.html?id=${encodeURIComponent(w.slug)}">
-          <img src="${esc(w.images[0].src)}" alt="${esc(w.title)}" loading="lazy">
-          <div class="caption"><div class="title">${esc(w.title)}</div><div class="meta">${esc(workMeta(w))}</div></div>
-        </a>`).join("") || "<p class=\"meta\">이 연도의 작품이 없습니다.</p>"}
+      ${WORKS_.filter((w) => w.year === y).map((w) => {
+        const first = SLIDES.length;
+        (w.images || []).forEach((im) => SLIDES.push({
+          src: im.src,
+          caption: workLine(w) + (im.caption ? ` (${im.caption})` : "")
+        }));
+        if (!w.images || !w.images.length) return "";
+        return `
+        <figure class="work-item">
+          <img src="${esc(w.images[0].src)}" alt="${esc(w.title)}" loading="lazy" data-slide="${first}">
+          <figcaption class="caption">${esc(workLine(w))}</figcaption>
+        </figure>`;
+      }).join("") || "<p class=\"meta\">이 연도의 작품이 없습니다.</p>"}
     </section>`).join("");
 }
 function renderWork(root) {
@@ -217,8 +231,18 @@ function setupEmail() {
    거기서 한 번 더 누르면 확대 → 마우스를 움직이는 곳이 확대됩니다. 다시 누르면 원래대로.
    닫기: × 버튼, Esc 키, 이미지 바깥 클릭.  여러 장이면 ← → 키나 화살표로 넘기기 */
 function setupViewer() {
-  const imgs = [...document.querySelectorAll(".figure img")];
-  if (!imgs.length) return;
+  // Works 목록: SLIDES 사용 / 상세 페이지: 페이지 안의 이미지 사용
+  const triggers = [];
+  if (!SLIDES.length) {
+    document.querySelectorAll(".figure img").forEach((im, i) => {
+      const fc = im.closest("figure").querySelector("figcaption");
+      SLIDES.push({ src: im.getAttribute("src"), caption: fc ? fc.textContent : "" });
+      im.dataset.slide = i;
+    });
+  }
+  document.querySelectorAll("img[data-slide]").forEach((im) => triggers.push(im));
+  if (!SLIDES.length) return;
+  const total = SLIDES.length;
 
   const v = document.createElement("div");
   v.className = "viewer";
@@ -249,17 +273,16 @@ function setupViewer() {
   const unzoom = () => { zoomed = false; big.style.transform = ""; v.classList.remove("zoomed"); };
 
   function show(i) {
-    idx = (i + imgs.length) % imgs.length;
+    idx = (i + total) % total;
     unzoom();
-    big.src = imgs[idx].currentSrc || imgs[idx].src;
-    const fc = imgs[idx].closest("figure").querySelector("figcaption");
-    cap.textContent = fc ? fc.textContent : "";
-    prevBtn.hidden = nextBtn.hidden = imgs.length < 2;
+    big.src = SLIDES[idx].src;
+    cap.textContent = SLIDES[idx].caption;
+    prevBtn.hidden = nextBtn.hidden = total < 2;
   }
   function open(i) { show(i); v.hidden = false; document.body.style.overflow = "hidden"; }
   function close() { v.hidden = true; unzoom(); document.body.style.overflow = ""; }
 
-  imgs.forEach((im, i) => im.addEventListener("click", () => open(i)));
+  triggers.forEach((im) => im.addEventListener("click", () => open(Number(im.dataset.slide))));
   v.querySelector(".v-close").addEventListener("click", close);
   prevBtn.addEventListener("click", () => show(idx - 1));
   nextBtn.addEventListener("click", () => show(idx + 1));
@@ -283,9 +306,22 @@ function setupViewer() {
   document.addEventListener("keydown", (e) => {
     if (v.hidden) return;
     if (e.key === "Escape") close();
-    if (e.key === "ArrowLeft" && imgs.length > 1) show(idx - 1);
-    if (e.key === "ArrowRight" && imgs.length > 1) show(idx + 1);
+    if (e.key === "ArrowLeft" && total > 1) show(idx - 1);
+    if (e.key === "ArrowRight" && total > 1) show(idx + 1);
   });
+}
+
+/* ───────── 하단 카피라이트 ─────────
+   문구를 바꾸려면 js/site.js의 SITE 안에 copyright: "원하는 문구", 를 추가하세요 */
+function renderFooter() {
+  const main = document.querySelector("main");
+  if (!main) return;
+  const who = SITE.nameEn || SITE.name;
+  const text = SITE.copyright || `© ${new Date().getFullYear()} ${who}. All rights reserved.`;
+  const f = document.createElement("footer");
+  f.className = "site-footer";
+  f.textContent = text;
+  main.appendChild(f);
 }
 
 /* ───────── 실행 ───────── */
@@ -302,3 +338,4 @@ if (content) {
   (routes[page] || routes.index)();
 }
 setupViewer();
+renderFooter();
