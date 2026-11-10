@@ -114,24 +114,91 @@ main { margin-left: var(--side); padding: 28px 40px 120px 24px; }
   .work-item { margin-bottom: 56px; }
   .text-row { flex-direction: column; gap: 2px; }
 }
-   /* ───────── Email 버튼 (누르면 주소 펼침 + 복사) ───────── */
-   .email-btn {
-     display: block; padding: 0; border: 0; background: none;
-     font: inherit; color: inherit; cursor: pointer; text-align: left;
-   }
-   .email-btn:hover { color: var(--muted); }
-   .email-reveal { margin: 2px 0 6px; }
-   .email-reveal a { text-decoration: underline; text-underline-offset: 3px; word-break: break-all; }
-   .email-note { display: block; color: var(--muted); font-size: 12px; }
-   @media (max-width: 760px) {
-     .side-contact { flex-wrap: wrap; }
-     .email-reveal { flex-basis: 100%; order: 3; }
-   }
-   /* ───────── 왼쪽 위 이름 ───────── */
-   .side-name {
-     font-size: 20px;       /* 글자 크기 */
-     font-weight: 700;      /* 굵기: 400 보통 · 500 · 600 · 700 굵게 */
-     color: #000000;        /* 색 */
-     letter-spacing: 0.01em;
-     line-height: 1.25;
-   }
+
+/* ───────── Email 버튼 (누르면 주소 펼침 + 복사) ───────── */
+.email-btn {
+  display: block; padding: 0; border: 0; background: none;
+  font: inherit; color: inherit; cursor: pointer; text-align: left;
+}
+.email-btn:hover { color: var(--muted); }
+.email-reveal { margin: 2px 0 6px; }
+.email-reveal a { text-decoration: underline; text-underline-offset: 3px; word-break: break-all; }
+.email-note { display: block; color: var(--muted); font-size: 12px; }
+@media (max-width: 760px) {
+  .side-contact { flex-wrap: wrap; }
+  .email-reveal { flex-basis: 100%; order: 3; }
+}
+
+/* ───────── 왼쪽 메뉴: 연도 하위 메뉴 ───────── */
+.side-years a { padding: 1px 0; }
+
+/* ───────── Exhibition 목록: 포스터 썸네일 + 정보 ───────── */
+.ex-row {
+  display: grid; grid-template-columns: 160px 1fr; gap: 24px;
+  max-width: 720px; padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+}
+.ex-row:first-of-type { padding-top: 0; }
+a.ex-row:hover { color: inherit; }
+a.ex-row:hover .title { text-decoration: underline; text-underline-offset: 4px; }
+.ex-thumb img { width: 100%; height: auto; }
+.ex-info .title { font-weight: 500; }
+.ex-meta { margin-top: 8px; color: var(--muted); white-space: pre-line; }
+.year-block > .ex-row:last-child { border-bottom: 0; }
+
+@media (max-width: 760px) {
+  .side-sub.side-years {
+    display: flex; flex-wrap: wrap; gap: 0 12px;
+    flex-basis: 100%; order: 10; margin: 4px 0 0;
+  }
+  .sidebar nav .side-section { display: contents; }
+  .sidebar nav > .side-section > a { order: 0; }
+  .ex-row { grid-template-columns: 96px 1fr; gap: 16px; }
+}
+
+/* ───────── 왼쪽 위 이름 ───────── */
+.side-name {
+  font-size: 20px;       /* 글자 크기 */
+  font-weight: 700;      /* 굵기: 400 보통 · 500 · 600 · 700 굵게 */
+  color: #000000;        /* 색 */
+  letter-spacing: 0.01em;
+  line-height: 1.25;
+}
+
+/* ───────── 이미지 확대 보기 ───────── */
+.figure img { cursor: zoom-in; }
+
+.viewer {
+  position: fixed; inset: 0; z-index: 100;
+  background: var(--bg);   /* 배경색. 검정으로 하려면 #000000 (그때는 버튼 색도 바꿔야 해요) */
+}
+.viewer[hidden] { display: none; }
+.v-stage {
+  position: absolute; inset: 56px 72px 56px;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.v-stage img {
+  width: auto; height: auto; max-width: 100%; max-height: 100%;
+  cursor: zoom-in; transition: transform .25s ease;
+  user-select: none; -webkit-user-drag: none;
+}
+.viewer.zoomed .v-stage img { cursor: zoom-out; transition: transform .25s ease, transform-origin 0s; }
+.v-caption {
+  position: absolute; left: 0; right: 0; bottom: 18px;
+  text-align: center; color: var(--muted);
+}
+.viewer button {
+  position: absolute; border: 0; background: none; cursor: pointer;
+  font: inherit; font-size: 22px; line-height: 1; color: var(--fg); padding: 12px;
+}
+.viewer button:hover { color: var(--muted); }
+.viewer button[hidden] { display: none; }
+.v-close { top: 8px; right: 12px; font-size: 28px; }
+.v-prev { left: 12px; top: 50%; transform: translateY(-50%); }
+.v-next { right: 12px; top: 50%; transform: translateY(-50%); }
+
+@media (max-width: 760px) {
+  .v-stage { inset: 52px 8px 52px; }
+  .v-prev, .v-next { top: auto; bottom: 4px; transform: none; }
+}
