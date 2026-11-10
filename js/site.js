@@ -2,7 +2,8 @@
   사이트 기본 정보 — 이름, 연락처, 왼쪽 메뉴 설정
 */
 const SITE = {
-  nameEn: "DAEUN CHUNG",               // 영문 표기
+  name: "DAEUN CHUNG",               // 영문 표기
+  name: "",              
   email: "tuckde066@naver.com",            // 이메일 주소로 바꾸세요
   instagram: "https://www.instagram.com/choroknaraa/"  // 인스타그램 주소로 바꾸세요 (안 쓰면 "" 로 비우기)
 };
