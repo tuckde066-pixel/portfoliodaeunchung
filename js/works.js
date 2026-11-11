@@ -22,6 +22,20 @@ const SIDEBAR_GROUP_BY = "year";
 const CATEGORY_ORDER = ["Painting", "Textile", "Exhibitions"];
 
 const WORKS = [
+    {
+    slug: "nenio",
+    category: "Painting",
+    year: 2025,
+    title: "〈네니오〉",
+    titleEn: "",
+    medium: "황마에 아크릴릭",
+    mediumEn: "Acrylic on jute",
+    size: "246 × 205.5 cm",
+    images: [
+      { src: "works/nenio-01.jpg", caption: "" }
+    ],
+    text: ""
+  },
   {
     slug: "sample-double",
     category: "Painting",
