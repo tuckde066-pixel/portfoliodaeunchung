@@ -36,48 +36,4 @@ const WORKS = [
     ],
     text: ""
   },
-  {
-    slug: "sample-double",
-    category: "Painting",
-    year: 2026,
-    title: "작품 제목 (양면회화 예시)",
-    titleEn: "Untitled (Double-sided)",
-    medium: "황마에 아크릴, 양면",
-    mediumEn: "Acrylic on jute, double-sided",
-    size: "130 × 162 cm",
-    images: [
-      { src: "works/sample-double/01.jpg", caption: "앞면" },
-      { src: "works/sample-double/02.jpg", caption: "뒷면" },
-      { src: "works/sample-double/03.jpg", caption: "부분" }
-    ],
-    text: "작품 설명을 여기에 씁니다. 비워두면 표시되지 않습니다."
-  },
-  {
-    slug: "sample-layer",
-    category: "Painting",
-    year: 2026,
-    title: "작품 제목 (확대중첩회화 예시)",
-    titleEn: "Untitled (Enlarged layering)",
-    medium: "황마에 유채",
-    mediumEn: "Oil on jute",
-    size: "100 × 80 cm",
-    images: [
-      { src: "works/sample-layer/01.jpg", caption: "" }
-    ],
-    text: ""
-  },
-  {
-    slug: "sample-2025",
-    category: "Textile",
-    year: 2025,
-    title: "작품 제목",
-    titleEn: "Untitled",
-    medium: "혼합재료",
-    mediumEn: "Mixed media",
-    size: "가변크기",
-    images: [
-      { src: "works/sample-2025/01.jpg", caption: "" }
-    ],
-    text: ""
-  }
 ];
