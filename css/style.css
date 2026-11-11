@@ -238,3 +238,12 @@ a.ex-row:hover .title { text-decoration: underline; text-underline-offset: 4px; 
      -webkit-touch-callout: none;
      user-select: none;
    }
+   /* ───────── 넓은 화면: 내용을 오른쪽 영역 가운데로 ───────── */
+   :root { --col: 1100px; }
+   .year-block, .site-footer, .pager, .detail-head,
+   .text-list, .cv section, .ex-row, .body-text {
+     margin-left: auto; margin-right: auto;
+   }
+   .year-block, .site-footer, .pager, .detail-head { max-width: var(--col); }
+   .text-list, .cv section, .ex-row, .body-text { max-width: min(var(--col), 760px); }
+   .work-item, .figure { margin-left: auto; margin-right: auto; }
