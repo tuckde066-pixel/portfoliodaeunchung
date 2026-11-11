@@ -232,3 +232,9 @@ a.ex-row:hover .title { text-decoration: underline; text-underline-offset: 4px; 
 @media (max-width: 760px) {
   .site-footer { margin-top: 80px; }
 }
+   /* ───────── 이미지 저장 막기 (모바일 길게 누르기, 드래그) ───────── */
+   img {
+     -webkit-user-drag: none;
+     -webkit-touch-callout: none;
+     user-select: none;
+   }
